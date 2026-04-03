@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from "react";
-import "../scss/Home.scss";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import { BiPlay } from "react-icons/bi";
-import { AiOutlinePlus } from "react-icons/ai";
-import myBanner from "../assets/myBanner.jpg";
+import React, { useEffect, useState } from "react"; // Import React and hooks
+import "../scss/Home.scss"; // Import styling for Home component
+import axios from "axios"; // Import axios for API requests
+import { Link } from "react-router-dom"; // Import Link for routing to genres
+import { BiPlay } from "react-icons/bi"; // Import Play icon
+import { AiOutlinePlus } from "react-icons/ai"; // Import Plus icon
+import myBanner from "../assets/myBanner.jpg"; // Import banner image
 
-// Fetch Data from Movie-API
-const apiKey = "7e5122f42b3d47b2f9c1deaf4e1d2214";
-const url = "https://api.themoviedb.org/3";
-const imgUrl = "https://image.tmdb.org/t/p/original";
-const upcoming = "upcoming";
-const nowPlaying = "now_playing";
-const popular = "popular";
-const topRated = "top_rated";
+// API Configuration
+const apiKey = "7e5122f42b3d47b2f9c1deaf4e1d2214"; // TMDb API Key
+const url = "https://api.themoviedb.org/3"; // Base URL for TMDb API
+const imgUrl = "https://image.tmdb.org/t/p/original"; // Base URL for movie poster images
+const upcoming = "upcoming"; // Endpoint for upcoming movies
+const nowPlaying = "now_playing"; // Endpoint for now playing movies
+const popular = "popular"; // Endpoint for popular movies
+const topRated = "top_rated"; // Endpoint for top-rated movies
 
+// Card Component: Displays single movie poster
 const Card = ({ img }) => <img className="card" src={img} alt="cover" />;
 
+// Row Component: Displays a row of movie cards with a title
 const Row = ({ title, arr = [] }) => (
   <div className="row">
     <h2>{title}</h2>
@@ -29,48 +31,60 @@ const Row = ({ title, arr = [] }) => (
   </div>
 );
 
+// Home Component: Main page
 const Home = () => {
+  // State variables to store movie data
   const [upcomingMovies, setUpcomingMovies] = useState([]);
   const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
   const [popularMovies, setPopularMovies] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
   const [genre, setGenre] = useState([]);
 
+  // Fetch movie data from TMDb API when component mounts
   useEffect(() => {
+    // Fetch upcoming movies
     const fetchUpcoming = async () => {
       const {
         data: { results },
       } = await axios.get(`${url}/movie/${upcoming}?api_key=${apiKey}`);
       setUpcomingMovies(results);
     };
+
+    // Fetch now playing movies
     const fetchNowPlaying = async () => {
       const {
         data: { results },
       } = await axios.get(`${url}/movie/${nowPlaying}?api_key=${apiKey}`);
       setNowPlayingMovies(results);
     };
+
+    // Fetch popular movies
     const fetchPopular = async () => {
       const {
         data: { results },
       } = await axios.get(`${url}/movie/${popular}?api_key=${apiKey}`);
       setPopularMovies(results);
     };
+
+    // Fetch top rated movies
     const fetchTopRated = async () => {
       const {
         data: { results },
       } = await axios.get(`${url}/movie/${topRated}?api_key=${apiKey}`);
       setTopRatedMovies(results);
     };
+
+    // Fetch all movie genres
     const getAllGenre = async () => {
       const {
         data: { genres },
       } = await axios.get(`${url}/genre/movie/list?api_key=${apiKey}`);
-      setGenre(genres);
+      setGenre(genres); // Save genres in state
       // console.log(genres);
     };
 
+    // Call all API fetch functions
     getAllGenre();
-
     fetchUpcoming();
     fetchNowPlaying();
     fetchPopular();
@@ -79,17 +93,25 @@ const Home = () => {
 
   return (
     <section className="home">
+      {/* Banner Section */}
       <div
         className="banner"
         style={{
-          backgroundImage: `url(${myBanner})`,
+          backgroundImage: `url(${myBanner})`, // Set banner background
         }}
       >
         <h1>GOAT</h1>
-        <p>“GOAT” is an animated sports‑comedy about Will Harris, a small but determined goat who dreams of playing professional roarball — a fast‑paced, full‑contact sport in a world of anthropomorphic animals. Despite being undersized, Will gets a rare chance to join a pro team and must prove that heart and talent matter more than size. The film blends high‑energy action, comedy, and heart‑warming underdog themes.</p>
+        <p>
+          “GOAT” is an animated sports‑comedy about Will Harris, a small but
+          determined goat who dreams of playing professional roarball — a
+          fast‑paced, full‑contact sport in a world of anthropomorphic animals.
+          Despite being undersized, Will gets a rare chance to join a pro team
+          and must prove that heart and talent matter more than size. The film
+          blends high‑energy action, comedy, and heart‑warming underdog themes.
+        </p>
 
+        {/* Banner Buttons */}
         <div>
-          {/* <button onClick={() => console.log("CLICKED")}> */}
           <button onClick={() => window.location.reload()}>
             <BiPlay /> Play
           </button>
@@ -99,11 +121,13 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Movie Rows */}
       <Row title={"Upcoming"} arr={upcomingMovies} />
       <Row title={"Now Playing"} arr={nowPlayingMovies} />
       <Row title={"Popular"} arr={popularMovies} />
       <Row title={"Top Rated"} arr={topRatedMovies} />
 
+      {/* Genre Links */}
       <div className="genreBox">
         {genre.map((item) => (
           <Link key={item.id} to={`/genre/${item.id}`}>
